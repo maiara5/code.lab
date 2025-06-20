@@ -1,0 +1,114 @@
+/*Este programa gera um vetor com números aleatórios de tamanho definido pelo usuário.
+Usa dois métodos de ordenação Bubble Sort e Insertion Sort para organizar os números
+em ordem crescente e decrescente.*/
+
+//importaçao das bibliotecas que serão utilizadas
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+//funçao bubblesort para organizar o vetor de forma crescente e decrescente
+void bubble_sort(int *vetor, int tamanho, int crescente) {
+    int aux;
+    for (int i = 0; i < tamanho - 1; i++) {
+        for (int j = 0; j < tamanho - i - 1; j++) {
+            if ((crescente && vetor[j] > vetor[j + 1]) || (!crescente && vetor[j] < vetor[j + 1])) {
+                aux = vetor[j];
+                vetor[j] = vetor[j + 1];
+                vetor[j + 1] = aux;
+            }
+        }
+    }
+}
+
+//função insertion sort crescente e decrescente
+void insertion_sort(int *vetor, int tamanho, int crescente) {
+    int chave, j;
+    for (int i = 1; i < tamanho; i++) {
+        chave = vetor[i];
+        j = i - 1;
+        if (crescente) {
+            while (j >= 0 && vetor[j] > chave) {
+                vetor[j + 1] = vetor[j];
+                j--;
+            }
+        } else {
+            while (j >= 0 && vetor[j] < chave) {
+                vetor[j + 1] = vetor[j];
+                j--;
+            }
+        }
+        vetor[j + 1] = chave;
+    }
+}
+
+//função para imprimir vetor
+void imprimir(int *vetor, int tamanho, const char *mensagem) {
+    printf("\n%s\n", mensagem);
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\n");
+}
+
+//inicializaçao do programa
+int main() {
+    srand(time(NULL)); //inicializa o gerador de números aleatórios
+    int tamanho;
+
+    printf("Digite o tamanho do vetor: ");
+    scanf("%d", &tamanho);
+
+//gera vetor original
+    int *original = (int*) malloc(tamanho * sizeof(int));
+    if (original == NULL) {
+        printf("Erro na alocação de memória.\n");
+        return 1;
+    }
+    for (int i = 0; i < tamanho; i++) {
+        original[i] = rand() % 10000;
+    }
+    imprimir (original, tamanho, "Vetor desorganizado:");
+
+//aloca memória para 4 vetores que serão usados para cada tipo de ordenação
+    int *bub_cresc = (int*) malloc(tamanho * sizeof(int));
+    int *bub_decresc = (int*) malloc(tamanho * sizeof(int));
+    int *ins_cresc = (int*) malloc(tamanho * sizeof(int));
+    int *ins_decresc = (int*) malloc(tamanho * sizeof(int));
+
+//verifica alocação
+    if (!bub_cresc || !bub_decresc || !ins_cresc || !ins_decresc) {
+        printf("Erro na alocação de memória.\n");
+        return 1;
+    }
+
+//replicação dos valores do vetor original para os outros vetores que serão ordenados
+    for (int i = 0; i < tamanho; i++) {
+        bub_cresc[i] = original[i];
+        bub_decresc[i] = original[i];
+        ins_cresc[i] = original[i];
+        ins_decresc[i] = original[i];
+    }
+
+//printa os números organizados de forma crescente e descrecente
+    bubble_sort(bub_cresc, tamanho, 1);
+    imprimir(bub_cresc, tamanho, "Vetor organizado de forma crescente com Bubble Sort:");
+
+    bubble_sort(bub_decresc, tamanho, 0);
+    imprimir(bub_decresc, tamanho, "Vetor organizado de forma decrescente com Bubble Sort:");
+
+    insertion_sort(ins_cresc, tamanho, 1);
+    imprimir(ins_cresc, tamanho, "Vetor organizado de forma crescente com Insertion Sort:");
+
+    insertion_sort(ins_decresc, tamanho, 0);
+    imprimir(ins_decresc, tamanho, "Vetor organizado de forma decrescente com Insertion Sort:");
+
+//libera a memória
+    free(original);
+    free(bub_cresc);
+    free(bub_decresc);
+    free(ins_cresc);
+    free(ins_decresc);
+
+return 0;
+}
